@@ -20,4 +20,14 @@ I use it to generate feeds for Quicklisp build failure reports.
 		     :guid "my-great-feed-item-1"
 		     :guid-permalink-p nil)
       (generate-to feed "rss.xml"))
-                          
+
+### Feedback
+
+Development of westbrook takes place on
+[github](https://github.com/xach/westbrook/). If you find a bug, please
+report via [github
+issues](https://github.com/xach/westbrook/issues). You can also email
+me at [xach@xach.com](mailto:xach@xach.com).
+
+Enjoy!
+
