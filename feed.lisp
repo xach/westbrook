@@ -4,40 +4,68 @@
 
 (defvar *generator-string* "commonlisp/westbrook/xach")
 
-(defclass feed ()
+(defun check-required-slots (object slots)
+  (dolist (slot slots)
+    (unless (slot-boundp object slot)
+      (error "Slot ~S must be initialized in ~S objects"
+             slot
+             (class-name (class-of object))))))
+
+(defclass checked-slots-mixin ()
+  ((checked-slots
+    :reader checked-slots
+    :initarg :checked-slots)))
+
+(defmethod shared-initialize :after
+    ((object checked-slots-mixin) (slot-names t)
+     &rest initargs &key &allow-other-keys)
+  (declare (ignore initargs))
+  (check-required-slots object (checked-slots object)))
+
+(defclass feed (checked-slots-mixin)
   ((title
     :initarg :title
-    :accessor title)
+    :accessor title
+    :documentation "Required. A short description/title for the
+    feed.")
    (link
     :initarg :link
-    :accessor link)
+    :accessor link
+    :documentation "Required. A link to the RSS feed itself.")
    (description
     :initarg :description
-    :accessor description)
+    :accessor description
+    :documentation "Required. A long-ish description of the feed.")
    (pub-date
     :initarg :pub-date
-    :accessor pub-date)
+    :accessor pub-date
+    :initform (get-universal-time))
    (last-build-date
     :initarg :last-build-date
-    :accessor last-build-date)
-   (category
-    :initarg :category
-    :initform nil
-    :accessor category)
-   (image
-    :initarg :image
-    :accessor image
-    :initform nil)
+    :accessor last-build-date
+    :initform (get-universal-time))
    (items
     :initarg :items
-    :initform ()
+    :initform '()
     :accessor items)
    (item-class
     :initarg :item-class
     :initform 'item
-    :accessor item-class)))
+    :accessor item-class
+    :documentation "When using ADD-FEED-ITEM or MAKE-FEED-ITEM, new
+    items are created as instances of this class."))
+  (:default-initargs
+   :checked-slots '(title link)))
 
-(defclass item ()
+(defmethod print-object ((feed feed) stream)
+  (print-unreadable-object (feed stream :type t :identity t)
+    (format stream "~S with ~:D item~:P"
+            (if (slot-boundp feed 'title)
+                (title feed)
+                "[missing title]")
+            (length (items feed)))))
+
+(defclass item (checked-slots-mixin)
   ((title
     :initarg :title
     :accessor title
@@ -65,7 +93,16 @@
    (guid-permalink-p
     :initarg :guid-permalink-p
     :accessor guid-permalink-p
-    :initform nil)))
+    :initform nil))
+  (:default-initargs
+   :checked-slots '(link title guid)))
+
+(defmethod print-object ((item item) stream)
+  (print-unreadable-object (item stream :type t :identity t)
+    (format stream "~S"
+            (if (slot-boundp item 'title)
+                (title item)
+                "[missing title]"))))
 
 (defgeneric make-feed-item (feed &rest initargs &key &allow-other-keys)
   (:method (feed &rest initargs &key &allow-other-keys)
