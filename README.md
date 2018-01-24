@@ -10,16 +10,18 @@ I use it to generate feeds for Quicklisp build failure reports.
 
 ### Example
 
-    (let ((feed (make-instance 'feed
-                               :title "My Great Feed"
-			       :link "https://www.xach.com/"
-			       :description "My feed.")))
-      (add-feed-item feed
-      		     :title "An item"
-		     :description "Here is <a href='https://github.com/xach/vecto/'>vecto</a>!"
-		     :guid "my-great-feed-item-1"
-		     :guid-permalink-p nil)
-      (generate-to feed "rss.xml"))
+```lisp
+(let ((feed (make-instance 'feed
+                           :title "My Great Feed"
+                           :link "https://www.xach.com/"
+                           :description "My feed.")))
+  (add-feed-item feed
+                 :title "An item"
+                 :description "Here is <a href='https://github.com/xach/vecto/'>vecto</a>!"
+                 :guid "my-great-feed-item-1"
+                 :guid-permalink-p nil)
+  (generate-to "rss.xml" feed))
+```
 
 ### Feedback
 
