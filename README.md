@@ -18,6 +18,7 @@ I use it to generate feeds for Quicklisp build failure reports.
   (add-feed-item feed
                  :title "An item"
                  :description "Here is <a href='https://github.com/xach/vecto/'>vecto</a>!"
+                 :link "https://www.xach.com/lisp/"
                  :guid "my-great-feed-item-1"
                  :guid-permalink-p nil)
   (generate-to "rss.xml" feed))
